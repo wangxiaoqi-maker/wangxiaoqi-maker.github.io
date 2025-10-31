@@ -1,0 +1,10 @@
+/*鼠标*/
+body {
+  cursor: url(https://npm.elemecdn.com/reverse-stu-allversions@1.0.3/butterfly/diy/default.cur),
+    default;
+}
+a,
+img {
+  cursor: url(https://npm.elemecdn.com/reverse-stu-allversions@1.0.3/butterfly/diy/pointer.cur),
+    default;
+}
