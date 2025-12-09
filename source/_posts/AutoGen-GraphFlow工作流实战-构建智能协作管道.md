@@ -356,19 +356,6 @@ builder.add_edge(perf_tester, integrator)
 builder.add_edge(sec_tester, integrator)
 ```
 
-### 场景2：代码审查系统
-
-```python
-# 代码生成 → 多维度检查 → 合并
-coder = AssistantAgent("coder", ..., system_message="编写代码")
-security_checker = AssistantAgent("security", ..., system_message="安全检查")
-performance_checker = AssistantAgent("performance", ..., system_message="性能检查")
-style_checker = AssistantAgent("style", ..., system_message="代码风格检查")
-merger = AssistantAgent("merger", ..., system_message="整合检查结果")
-```
-
----
-
 ## 总结
 
 本文介绍了 AutoGen 的 **GraphFlow** 工作流机制：
@@ -382,8 +369,6 @@ merger = AssistantAgent("merger", ..., system_message="整合检查结果")
 通过 GraphFlow，你可以轻松构建复杂的多智能体协作管道，实现：
 - 内容创作流水线
 - 测试用例生成系统
-- 代码审查自动化
-- 文档处理管道
 
 ---
 
