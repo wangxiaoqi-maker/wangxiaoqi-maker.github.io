@@ -1,0 +1,359 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>AutoGen GraphFlow工作流实战：构建智能协作管道 | XiaoQi's Blog</title><meta name="keywords" content="Python,AutoGen,AI智能体,工作流,GraphFlow"><meta name="author" content="王小七,邮箱"><meta name="copyright" content="王小七"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言在之前的 AutoGen 系列文章中，我们学习了如何创建单个智能体和多智能体协作。但在实际业务场景中，我们往往需要更复杂的工作流编排能力——让多个智能体按照特定的顺序和逻辑协同工作。 本文将介绍 AutoGen 框架中强大的 GraphFlow 工作流机制，通过构建有向图（DAG）来编排复杂的多智能体协作流程。我们将实现一个内容创作管道：写作 → 并行编辑（语法+风格） → 最终审核。  什么">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AutoGen GraphFlow工作流实战：构建智能协作管道">
+<meta property="og:url" content="http://example.com/2025/12/08/AutoGen-GraphFlow%E5%B7%A5%E4%BD%9C%E6%B5%81%E5%AE%9E%E6%88%98-%E6%9E%84%E5%BB%BA%E6%99%BA%E8%83%BD%E5%8D%8F%E4%BD%9C%E7%AE%A1%E9%81%93/index.html">
+<meta property="og:site_name" content="XiaoQi's Blog">
+<meta property="og:description" content="前言在之前的 AutoGen 系列文章中，我们学习了如何创建单个智能体和多智能体协作。但在实际业务场景中，我们往往需要更复杂的工作流编排能力——让多个智能体按照特定的顺序和逻辑协同工作。 本文将介绍 AutoGen 框架中强大的 GraphFlow 工作流机制，通过构建有向图（DAG）来编排复杂的多智能体协作流程。我们将实现一个内容创作管道：写作 → 并行编辑（语法+风格） → 最终审核。  什么">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&amp;q=80">
+<meta property="article:published_time" content="2025-12-08T13:00:00.000Z">
+<meta property="article:modified_time" content="2025-12-09T12:25:55.457Z">
+<meta property="article:author" content="王小七">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="AutoGen">
+<meta property="article:tag" content="AI智能体">
+<meta property="article:tag" content="工作流">
+<meta property="article:tag" content="GraphFlow">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&amp;q=80"><link rel="shortcut icon" href="/img/favicon.jpg"><link rel="canonical" href="http://example.com/2025/12/08/AutoGen-GraphFlow%E5%B7%A5%E4%BD%9C%E6%B5%81%E5%AE%9E%E6%88%98-%E6%9E%84%E5%BB%BA%E6%99%BA%E8%83%BD%E5%8D%8F%E4%BD%9C%E7%AE%A1%E9%81%93/"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="//busuanzi.ibruce.info"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'AutoGen GraphFlow工作流实战：构建智能协作管道',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-12-09 20:25:55'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><style> body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td {margin:0; padding:0} video#bgvid { position:fixed; right:0; bottom:0; min-width:100%; min-height:100%; width:auto; height:auto; z-index:-100;head background-size:cover; } video {display:block;}</style><link rel="stylesheet" href="/css/custom.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="/css/mouse.css"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/assets/font-awesome-animation.min.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/tag_plugins.css" media="defer" onload="this.media='all'"><script src="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/assets/carousel-touch.js"></script><link rel="stylesheet" href="https://unpkg.zhimg.com/hexo-butterfly-wowjs/lib/animate.min.css" media="print" onload="this.media='screen'"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/assets/font-awesome-animation.min.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-tag-plugins@latest/lib/tag_plugins.min.css" media="defer" onload="this.media='all'"><script src="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/assets/carousel-touch.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-tag-plugins@latest/lib/mindmap.min.css" media="defer" onload="this.media='all'"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/favicon.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">25</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&amp;q=80')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">XiaoQi's Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">AutoGen GraphFlow工作流实战：构建智能协作管道</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-12-08T13:00:00.000Z" title="发表于 2025-12-08 21:00:00">2025-12-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-12-09T12:25:55.457Z" title="更新于 2025-12-09 20:25:55">2025-12-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/AutoGen/">AutoGen</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>6分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="AutoGen GraphFlow工作流实战：构建智能协作管道"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><div class="top-img" style="background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&amp;q=80');"></div><article class="post-content" id="article-container"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在之前的 AutoGen 系列文章中，我们学习了如何创建单个智能体和多智能体协作。但在实际业务场景中，我们往往需要更复杂的<strong>工作流编排</strong>能力——让多个智能体按照特定的顺序和逻辑协同工作。</p>
+<p>本文将介绍 AutoGen 框架中强大的 <strong>GraphFlow</strong> 工作流机制，通过构建有向图（DAG）来编排复杂的多智能体协作流程。我们将实现一个<strong>内容创作管道</strong>：写作 → 并行编辑（语法+风格） → 最终审核。</p>
+<hr>
+<h2 id="什么是-GraphFlow？"><a href="#什么是-GraphFlow？" class="headerlink" title="什么是 GraphFlow？"></a>什么是 GraphFlow？</h2><p><strong>GraphFlow</strong> 是 AutoGen 提供的基于图的工作流编排方案。它允许你：</p>
+<ul>
+<li>🔀 <strong>有向图编排</strong>：使用 DiGraphBuilder 构建复杂的工作流拓扑</li>
+<li>📊 <strong>并行处理</strong>：支持 Fan-out 模式，让多个智能体并行工作</li>
+<li>🔗 <strong>聚合结果</strong>：支持 Fan-in 模式，汇总多路结果</li>
+<li>⚡ <strong>流式输出</strong>：实时展示工作流执行过程</li>
+<li>🎯 <strong>灵活扩展</strong>：轻松添加新的节点和边</li>
+</ul>
+<h3 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h3><p>GraphFlow 特别适合以下场景：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>内容创作流水线</strong></td>
+<td>写作 → 多维度审核 → 终审</td>
+</tr>
+<tr>
+<td><strong>代码审查系统</strong></td>
+<td>生成代码 → 安全检查 + 性能检查 → 合并</td>
+</tr>
+<tr>
+<td><strong>测试用例生成</strong></td>
+<td>需求分析 → 多类型用例生成 → 整合</td>
+</tr>
+<tr>
+<td><strong>文档翻译</strong></td>
+<td>翻译 → 多人校对 → 统稿</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="项目架构"><a href="#项目架构" class="headerlink" title="项目架构"></a>项目架构</h2><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">project/</span><br><span class="line">├── backend/</span><br><span class="line">│   └── llms.py          # 模型客户端配置</span><br><span class="line">├── test_graph_flow.py   # GraphFlow 工作流实现</span><br><span class="line">└── .Env                 # 环境变量配置</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="工作流设计"><a href="#工作流设计" class="headerlink" title="工作流设计"></a>工作流设计</h3><p>我们将构建以下工作流：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">               ┌──────────┐</span><br><span class="line">               │  writer  │</span><br><span class="line">               │  (写作)   │</span><br><span class="line">               └────┬─────┘</span><br><span class="line">                    │</span><br><span class="line">       ┌────────────┼────────────┐</span><br><span class="line">       │                         │</span><br><span class="line">       ▼                         ▼</span><br><span class="line">┌──────────┐              ┌──────────┐</span><br><span class="line">│ editor1  │              │ editor2  │</span><br><span class="line">│ (语法)   │              │ (风格)   │</span><br><span class="line">└────┬─────┘              └────┬─────┘</span><br><span class="line">       │                         │</span><br><span class="line">       └────────────┬────────────┘</span><br><span class="line">                    │</span><br><span class="line">                    ▼</span><br><span class="line">             ┌──────────────┐</span><br><span class="line">             │final_reviewer│</span><br><span class="line">             │   (终审)      │</span><br><span class="line">             └──────────────┘</span><br></pre></td></tr></tbody></table></figure>
+<p>这是一个典型的 <strong>Fan-out/Fan-in</strong> 模式：</p>
+<ul>
+<li><strong>Fan-out</strong>：writer 的输出同时发送给 editor1 和 editor2</li>
+<li><strong>Fan-in</strong>：editor1 和 editor2 的输出汇聚到 final_reviewer</li>
+</ul>
+<hr>
+<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><h3 id="1-安装依赖"><a href="#1-安装依赖" class="headerlink" title="1. 安装依赖"></a>1. 安装依赖</h3><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install autogen-agentchat autogen-ext python-dotenv</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="2-配置环境变量"><a href="#2-配置环境变量" class="headerlink" title="2. 配置环境变量"></a>2. 配置环境变量</h3><p>创建 <code>.Env</code> 文件：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MODEL=deepseek-chat</span><br><span class="line">API_KEY=your-api-key</span><br><span class="line">BASE_URL=https://api.deepseek.com</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>💡 同样支持千问、ChatGPT、Claude 等模型，只需修改配置即可。</p>
+</blockquote>
+<hr>
+<h2 id="核心代码实现"><a href="#核心代码实现" class="headerlink" title="核心代码实现"></a>核心代码实现</h2><h3 id="完整代码"><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h3><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> autogen_agentchat.agents <span class="keyword">import</span> AssistantAgent</span><br><span class="line"><span class="keyword">from</span> autogen_agentchat.teams <span class="keyword">import</span> DiGraphBuilder, GraphFlow</span><br><span class="line"><span class="keyword">from</span> autogen_agentchat.ui <span class="keyword">import</span> Console</span><br><span class="line"><span class="keyword">from</span> dotenv <span class="keyword">import</span> load_dotenv</span><br><span class="line"></span><br><span class="line">load_dotenv(<span class="string">'.Env'</span>)</span><br><span class="line"><span class="keyword">from</span> backend.llms <span class="keyword">import</span> get_client</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建模型客户端</span></span><br><span class="line">client = get_client()</span><br><span class="line"></span><br><span class="line"><span class="comment"># ========== 1. 创建智能体 ==========</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 写作智能体：负责起草初稿</span></span><br><span class="line">writer = AssistantAgent(</span><br><span class="line">    <span class="string">"writer"</span>, </span><br><span class="line">    model_client=client, </span><br><span class="line">    system_message=<span class="string">"起草一段关于气候变化的短文。"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 语法编辑智能体：专注于语法改进</span></span><br><span class="line">editor1 = AssistantAgent(</span><br><span class="line">    <span class="string">"editor1"</span>, </span><br><span class="line">    model_client=client, </span><br><span class="line">    system_message=<span class="string">"编辑段落以改进语法。"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 风格编辑智能体：专注于风格优化</span></span><br><span class="line">editor2 = AssistantAgent(</span><br><span class="line">    <span class="string">"editor2"</span>, </span><br><span class="line">    model_client=client, </span><br><span class="line">    system_message=<span class="string">"编辑段落以改进风格。"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 终审智能体：整合所有编辑意见</span></span><br><span class="line">final_reviewer = AssistantAgent(</span><br><span class="line">    <span class="string">"final_reviewer"</span>,</span><br><span class="line">    model_client=client,</span><br><span class="line">    system_message=<span class="string">"整合语法和风格编辑，形成最终版本。"</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ========== 2. 构建工作流图 ==========</span></span><br><span class="line"></span><br><span class="line">builder = DiGraphBuilder()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加所有节点</span></span><br><span class="line">builder.add_node(writer) \</span><br><span class="line">       .add_node(editor1) \</span><br><span class="line">       .add_node(editor2) \</span><br><span class="line">       .add_node(final_reviewer)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建边：Fan-out（从 writer 分发到两个 editor）</span></span><br><span class="line">builder.add_edge(writer, editor1)</span><br><span class="line">builder.add_edge(writer, editor2)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建边：Fan-in（从两个 editor 汇聚到 final_reviewer）</span></span><br><span class="line">builder.add_edge(editor1, final_reviewer)</span><br><span class="line">builder.add_edge(editor2, final_reviewer)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建并验证图</span></span><br><span class="line">graph = builder.build()</span><br><span class="line"></span><br><span class="line"><span class="comment"># ========== 3. 创建工作流 ==========</span></span><br><span class="line"></span><br><span class="line">flow = GraphFlow(</span><br><span class="line">    participants=builder.get_participants(),</span><br><span class="line">    graph=graph,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ========== 4. 运行工作流 ==========</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="keyword">await</span> Console(flow.run_stream(task=<span class="string">"写一段关于气候变化的短文。"</span>))</span><br><span class="line"></span><br><span class="line">asyncio.run(main())</span><br></pre></td></tr></tbody></table></figure>
+<hr>
+<h2 id="代码详解"><a href="#代码详解" class="headerlink" title="代码详解"></a>代码详解</h2><h3 id="1-创建智能体"><a href="#1-创建智能体" class="headerlink" title="1. 创建智能体"></a>1. 创建智能体</h3><p>每个智能体都有明确的职责：</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">writer = AssistantAgent(</span><br><span class="line">    <span class="string">"writer"</span>,                                    <span class="comment"># 智能体名称</span></span><br><span class="line">    model_client=client,                         <span class="comment"># 模型客户端</span></span><br><span class="line">    system_message=<span class="string">"起草一段关于气候变化的短文。"</span>  <span class="comment"># 系统提示词</span></span><br><span class="line">)</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>职责分工</strong>：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>智能体</th>
+<th>职责</th>
+<th>系统提示词</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>writer</td>
+<td>创作初稿</td>
+<td>起草一段关于气候变化的短文</td>
+</tr>
+<tr>
+<td>editor1</td>
+<td>语法编辑</td>
+<td>编辑段落以改进语法</td>
+</tr>
+<tr>
+<td>editor2</td>
+<td>风格编辑</td>
+<td>编辑段落以改进风格</td>
+</tr>
+<tr>
+<td>final_reviewer</td>
+<td>终审整合</td>
+<td>整合语法和风格编辑，形成最终版本</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="2-构建工作流图"><a href="#2-构建工作流图" class="headerlink" title="2. 构建工作流图"></a>2. 构建工作流图</h3><p>使用 <strong>DiGraphBuilder</strong> 构建有向无环图（DAG）：</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">builder = DiGraphBuilder()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加节点（链式调用）</span></span><br><span class="line">builder.add_node(writer) \</span><br><span class="line">       .add_node(editor1) \</span><br><span class="line">       .add_node(editor2) \</span><br><span class="line">       .add_node(final_reviewer)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加边（定义执行顺序）</span></span><br><span class="line">builder.add_edge(writer, editor1)      <span class="comment"># writer → editor1</span></span><br><span class="line">builder.add_edge(writer, editor2)      <span class="comment"># writer → editor2</span></span><br><span class="line">builder.add_edge(editor1, final_reviewer)  <span class="comment"># editor1 → final_reviewer</span></span><br><span class="line">builder.add_edge(editor2, final_reviewer)  <span class="comment"># editor2 → final_reviewer</span></span><br></pre></td></tr></tbody></table></figure>
+<p><strong>核心概念</strong>：</p>
+<ul>
+<li><code>add_node()</code>：添加工作流节点（智能体）</li>
+<li><code>add_edge(source, target)</code>：添加有向边，定义执行依赖</li>
+<li><code>build()</code>：构建并验证图结构</li>
+</ul>
+<h3 id="3-创建-GraphFlow"><a href="#3-创建-GraphFlow" class="headerlink" title="3. 创建 GraphFlow"></a>3. 创建 GraphFlow</h3><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">flow = GraphFlow(</span><br><span class="line">    participants=builder.get_participants(),  <span class="comment"># 所有参与者</span></span><br><span class="line">    graph=graph,                              <span class="comment"># 工作流图</span></span><br><span class="line">)</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>GraphFlow</strong> 会根据图结构自动：</p>
+<ul>
+<li>确定执行顺序（拓扑排序）</li>
+<li>并行执行无依赖的节点</li>
+<li>等待依赖节点完成后再继续</li>
+</ul>
+<h3 id="4-流式运行"><a href="#4-流式运行" class="headerlink" title="4. 流式运行"></a>4. 流式运行</h3><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    <span class="keyword">await</span> Console(flow.run_stream(task=<span class="string">"写一段关于气候变化的短文。"</span>))</span><br></pre></td></tr></tbody></table></figure>
+<ul>
+<li><code>run_stream()</code>：流式执行工作流</li>
+<li><code>Console()</code>：在控制台实时显示执行过程</li>
+</ul>
+<hr>
+<h2 id="执行流程解析"><a href="#执行流程解析" class="headerlink" title="执行流程解析"></a>执行流程解析</h2><p>当运行这个工作流时，执行流程如下：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">1️⃣ 任务开始</span><br><span class="line">   ↓</span><br><span class="line">2️⃣ writer 接收任务，生成初稿</span><br><span class="line">   ↓</span><br><span class="line">3️⃣ Fan-out: 初稿同时发送给 editor1 和 editor2</span><br><span class="line">   ↓</span><br><span class="line">4️⃣ editor1 和 editor2 并行工作</span><br><span class="line">   │</span><br><span class="line">   ├─ editor1: 专注语法修改</span><br><span class="line">   │</span><br><span class="line">   └─ editor2: 专注风格优化</span><br><span class="line">   ↓</span><br><span class="line">5️⃣ Fan-in: 两个编辑的结果汇聚</span><br><span class="line">   ↓</span><br><span class="line">6️⃣ final_reviewer 整合所有意见，输出最终版本</span><br><span class="line">   ↓</span><br><span class="line">7️⃣ 任务完成</span><br></pre></td></tr></tbody></table></figure>
+<hr>
+<h2 id="进阶应用"><a href="#进阶应用" class="headerlink" title="进阶应用"></a>进阶应用</h2><h3 id="1-添加条件分支"><a href="#1-添加条件分支" class="headerlink" title="1. 添加条件分支"></a>1. 添加条件分支</h3><p>你可以根据条件动态选择执行路径：</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加条件边</span></span><br><span class="line">builder.add_conditional_edge(</span><br><span class="line">    source=writer,</span><br><span class="line">    condition=<span class="keyword">lambda</span> msg: <span class="string">"紧急"</span> <span class="keyword">in</span> msg.content,</span><br><span class="line">    true_target=urgent_reviewer,</span><br><span class="line">    false_target=normal_reviewer</span><br><span class="line">)</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="2-循环处理"><a href="#2-循环处理" class="headerlink" title="2. 循环处理"></a>2. 循环处理</h3><p>实现迭代优化：</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加反馈循环</span></span><br><span class="line">builder.add_edge(reviewer, writer)  <span class="comment"># reviewer 可以让 writer 重写</span></span><br></pre></td></tr></tbody></table></figure>
+<h3 id="3-更复杂的拓扑"><a href="#3-更复杂的拓扑" class="headerlink" title="3. 更复杂的拓扑"></a>3. 更复杂的拓扑</h3><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 多层 Fan-out/Fan-in</span></span><br><span class="line">builder.add_edge(writer, reviewer1)</span><br><span class="line">builder.add_edge(writer, reviewer2)</span><br><span class="line">builder.add_edge(writer, reviewer3)</span><br><span class="line"></span><br><span class="line">builder.add_edge(reviewer1, aggregator)</span><br><span class="line">builder.add_edge(reviewer2, aggregator)</span><br><span class="line">builder.add_edge(reviewer3, aggregator)</span><br></pre></td></tr></tbody></table></figure>
+<hr>
+<h2 id="实际应用场景"><a href="#实际应用场景" class="headerlink" title="实际应用场景"></a>实际应用场景</h2><h3 id="场景1：测试用例生成管道"><a href="#场景1：测试用例生成管道" class="headerlink" title="场景1：测试用例生成管道"></a>场景1：测试用例生成管道</h3><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 需求分析 → 多类型用例生成 → 整合</span></span><br><span class="line">analyzer = AssistantAgent(<span class="string">"analyzer"</span>, ..., system_message=<span class="string">"分析测试需求"</span>)</span><br><span class="line">func_tester = AssistantAgent(<span class="string">"func_tester"</span>, ..., system_message=<span class="string">"生成功能测试用例"</span>)</span><br><span class="line">perf_tester = AssistantAgent(<span class="string">"perf_tester"</span>, ..., system_message=<span class="string">"生成性能测试用例"</span>)</span><br><span class="line">sec_tester = AssistantAgent(<span class="string">"sec_tester"</span>, ..., system_message=<span class="string">"生成安全测试用例"</span>)</span><br><span class="line">integrator = AssistantAgent(<span class="string">"integrator"</span>, ..., system_message=<span class="string">"整合所有测试用例"</span>)</span><br><span class="line"></span><br><span class="line">builder.add_edge(analyzer, func_tester)</span><br><span class="line">builder.add_edge(analyzer, perf_tester)</span><br><span class="line">builder.add_edge(analyzer, sec_tester)</span><br><span class="line">builder.add_edge(func_tester, integrator)</span><br><span class="line">builder.add_edge(perf_tester, integrator)</span><br><span class="line">builder.add_edge(sec_tester, integrator)</span><br></pre></td></tr></tbody></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文介绍了 AutoGen 的 <strong>GraphFlow</strong> 工作流机制：</p>
+<p>✅ <strong>DiGraphBuilder</strong> 构建有向图<br>✅ <strong>Fan-out</strong> 并行分发任务<br>✅ <strong>Fan-in</strong> 汇聚多路结果<br>✅ <strong>流式输出</strong> 实时展示进度<br>✅ <strong>灵活扩展</strong> 适应复杂场景  </p>
+<p>通过 GraphFlow，你可以轻松构建复杂的多智能体协作管道，实现：</p>
+<ul>
+<li>内容创作流水线</li>
+<li>测试用例生成系统</li>
+</ul>
+<hr>
+<h2 id="系列回顾"><a href="#系列回顾" class="headerlink" title="系列回顾"></a>系列回顾</h2><p>📌 <strong>基础篇</strong>：<a href="/2025/11/01/使用AutoGen框架构建DeepSeek智能体实战/">AutoGen智能体开发实战（基础篇）</a></p>
+<p>📌 <strong>本文</strong>：GraphFlow 工作流实战</p>
+<p>📌 <strong>延伸阅读</strong>：</p>
+<ul>
+<li><a href="/2025/11/01/深入理解AutoGen消息机制-发布订阅与点对点通信/">深入理解AutoGen消息机制</a></li>
+<li><a href="/2025/11/01/AutoGen多智能体协作实战-构建智能测试用例生成器/">AutoGen多智能体协作实战</a></li>
+</ul>
+<hr>
+<h2 id="参考资源"><a href="#参考资源" class="headerlink" title="参考资源"></a>参考资源</h2><p><strong>官方文档</strong>：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://microsoft.github.io/autogen/docs/tutorial/graph">AutoGen GraphFlow 文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://microsoft.github.io/autogen/docs/reference/agentchat/teams/DiGraphBuilder">DiGraphBuilder API</a></li>
+</ul>
+<p><strong>相关概念</strong>：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/有向无环图">有向无环图（DAG）</a></li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/拓扑排序">拓扑排序</a></li>
+</ul>
+<hr>
+<blockquote>
+<p>💡 <strong>提示</strong>：GraphFlow 让复杂的多智能体协作变得简单直观。通过可视化的图结构，你可以清晰地设计和理解工作流逻辑。</p>
+<p>🚀 <strong>下一步</strong>：尝试将 GraphFlow 应用到你的实际项目中，构建属于你自己的智能协作管道！</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">王小七</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2025/12/08/AutoGen-GraphFlow%E5%B7%A5%E4%BD%9C%E6%B5%81%E5%AE%9E%E6%88%98-%E6%9E%84%E5%BB%BA%E6%99%BA%E8%83%BD%E5%8D%8F%E4%BD%9C%E7%AE%A1%E9%81%93/">http://example.com/2025/12/08/AutoGen-GraphFlow工作流实战-构建智能协作管道/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">XiaoQi's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Python/">Python</a><a class="post-meta__tags" href="/tags/AutoGen/">AutoGen</a><a class="post-meta__tags" href="/tags/AI%E6%99%BA%E8%83%BD%E4%BD%93/">AI智能体</a><a class="post-meta__tags" href="/tags/%E5%B7%A5%E4%BD%9C%E6%B5%81/">工作流</a><a class="post-meta__tags" href="/tags/GraphFlow/">GraphFlow</a></div><div class="post_share"><div class="social-share" data-image="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&amp;q=80" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/ShareJS/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/ShareJS/dist/js/social-share.min.js" defer=""></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="wechat"></a><div class="post-qr-code-desc">wechat</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2025/11/14/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3AutoGen%E6%B6%88%E6%81%AF%E6%9C%BA%E5%88%B6-%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E4%B8%8E%E7%82%B9%E5%AF%B9%E7%82%B9%E9%80%9A%E4%BF%A1/"><img class="next-cover" src="https://microsoft.github.io/autogen/stable//_images/subscription.svg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">深入理解AutoGen消息机制：发布/订阅与点对点通信</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2025/11/02/AutoGen%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E5%8D%8F%E4%BD%9C%E5%AE%9E%E6%88%98-%E6%9E%84%E5%BB%BA%E6%99%BA%E8%83%BD%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B%E7%94%9F%E6%88%90%E5%99%A8/" title="AutoGen多智能体协作实战：构建智能测试用例生成器（进阶篇）"><img class="cover" src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&amp;q=80" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-02</div><div class="title">AutoGen多智能体协作实战：构建智能测试用例生成器（进阶篇）</div></div></a></div><div><a href="/2025/11/01/%E4%BD%BF%E7%94%A8AutoGen%E6%A1%86%E6%9E%B6%E6%9E%84%E5%BB%BADeepSeek%E6%99%BA%E8%83%BD%E4%BD%93%E5%AE%9E%E6%88%98/" title="AutoGen智能体开发实战（基础篇）：从零构建你的第一个AI智能体"><img class="cover" src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&amp;q=80" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-01</div><div class="title">AutoGen智能体开发实战（基础篇）：从零构建你的第一个AI智能体</div></div></a></div><div><a href="/2025/11/13/%E5%9F%BA%E4%BA%8EMarker%E7%9A%84%E6%99%BA%E8%83%BD%E6%96%87%E6%A1%A3%E8%A7%A3%E6%9E%90%E5%99%A8-AutoGen%E6%B5%8B%E8%AF%95%E5%B9%B3%E5%8F%B0%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/" title="基于Marker的智能文档解析器：AutoGen测试平台核心组件"><img class="cover" src="https://images.unsplash.com/photo-1568667256549-094345857637?w=800&amp;q=80" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-13</div><div class="title">基于Marker的智能文档解析器：AutoGen测试平台核心组件</div></div></a></div><div><a href="/2025/11/14/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3AutoGen%E6%B6%88%E6%81%AF%E6%9C%BA%E5%88%B6-%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E4%B8%8E%E7%82%B9%E5%AF%B9%E7%82%B9%E9%80%9A%E4%BF%A1/" title="深入理解AutoGen消息机制：发布/订阅与点对点通信"><img class="cover" src="https://microsoft.github.io/autogen/stable//_images/subscription.svg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-14</div><div class="title">深入理解AutoGen消息机制：发布/订阅与点对点通信</div></div></a></div><div><a href="/2025/11/01/Python%E8%B0%83%E7%94%A8DeepSeek-API%E5%AE%9E%E6%88%98%E6%95%99%E7%A8%8B/" title="Python调用DeepSeek API实战教程"><img class="cover" src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=800" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-01</div><div class="title">Python调用DeepSeek API实战教程</div></div></a></div></div></div><hr><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="waline-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/favicon.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"></div><div class="author-info__name">王小七</div><div class="author-info__description">小七的测试成长之路</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">25</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/wangxiaoqi-maker"><i class="fab fa-github"></i><span>订阅</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/xxxxx" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:17621525387@139.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://wpa.qq.com/msgrd?v=3&amp;uin=417637243&amp;site=qq&amp;menu=yes" target="_blank" title="QQ"><i class="fab fa-qq"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-GraphFlow%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">什么是 GraphFlow？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.1.1.</span> <span class="toc-text">适用场景</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A1%B9%E7%9B%AE%E6%9E%B6%E6%9E%84"><span class="toc-number">1.2.</span> <span class="toc-text">项目架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E6%B5%81%E8%AE%BE%E8%AE%A1"><span class="toc-number">1.2.1.</span> <span class="toc-text">工作流设计</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">1.3.</span> <span class="toc-text">环境准备</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AE%89%E8%A3%85%E4%BE%9D%E8%B5%96"><span class="toc-number">1.3.1.</span> <span class="toc-text">1. 安装依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="toc-number">1.3.2.</span> <span class="toc-text">2. 配置环境变量</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.4.</span> <span class="toc-text">核心代码实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="toc-number">1.4.1.</span> <span class="toc-text">完整代码</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E8%AF%A6%E8%A7%A3"><span class="toc-number">1.5.</span> <span class="toc-text">代码详解</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%88%9B%E5%BB%BA%E6%99%BA%E8%83%BD%E4%BD%93"><span class="toc-number">1.5.1.</span> <span class="toc-text">1. 创建智能体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%9E%84%E5%BB%BA%E5%B7%A5%E4%BD%9C%E6%B5%81%E5%9B%BE"><span class="toc-number">1.5.2.</span> <span class="toc-text">2. 构建工作流图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%88%9B%E5%BB%BA-GraphFlow"><span class="toc-number">1.5.3.</span> <span class="toc-text">3. 创建 GraphFlow</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%B5%81%E5%BC%8F%E8%BF%90%E8%A1%8C"><span class="toc-number">1.5.4.</span> <span class="toc-text">4. 流式运行</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E8%A7%A3%E6%9E%90"><span class="toc-number">1.6.</span> <span class="toc-text">执行流程解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%9B%E9%98%B6%E5%BA%94%E7%94%A8"><span class="toc-number">1.7.</span> <span class="toc-text">进阶应用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%B7%BB%E5%8A%A0%E6%9D%A1%E4%BB%B6%E5%88%86%E6%94%AF"><span class="toc-number">1.7.1.</span> <span class="toc-text">1. 添加条件分支</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%BE%AA%E7%8E%AF%E5%A4%84%E7%90%86"><span class="toc-number">1.7.2.</span> <span class="toc-text">2. 循环处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9B%B4%E5%A4%8D%E6%9D%82%E7%9A%84%E6%8B%93%E6%89%91"><span class="toc-number">1.7.3.</span> <span class="toc-text">3. 更复杂的拓扑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.8.</span> <span class="toc-text">实际应用场景</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF1%EF%BC%9A%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B%E7%94%9F%E6%88%90%E7%AE%A1%E9%81%93"><span class="toc-number">1.8.1.</span> <span class="toc-text">场景1：测试用例生成管道</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.9.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B3%BB%E5%88%97%E5%9B%9E%E9%A1%BE"><span class="toc-number">1.10.</span> <span class="toc-text">系列回顾</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%BA%90"><span class="toc-number">1.11.</span> <span class="toc-text">参考资源</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/12/08/AutoGen-GraphFlow%E5%B7%A5%E4%BD%9C%E6%B5%81%E5%AE%9E%E6%88%98-%E6%9E%84%E5%BB%BA%E6%99%BA%E8%83%BD%E5%8D%8F%E4%BD%9C%E7%AE%A1%E9%81%93/" title="AutoGen GraphFlow工作流实战：构建智能协作管道"><img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&amp;q=80" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AutoGen GraphFlow工作流实战：构建智能协作管道"></a><div class="content"><a class="title" href="/2025/12/08/AutoGen-GraphFlow%E5%B7%A5%E4%BD%9C%E6%B5%81%E5%AE%9E%E6%88%98-%E6%9E%84%E5%BB%BA%E6%99%BA%E8%83%BD%E5%8D%8F%E4%BD%9C%E7%AE%A1%E9%81%93/" title="AutoGen GraphFlow工作流实战：构建智能协作管道">AutoGen GraphFlow工作流实战：构建智能协作管道</a><time datetime="2025-12-08T13:00:00.000Z" title="发表于 2025-12-08 21:00:00">2025-12-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/14/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3AutoGen%E6%B6%88%E6%81%AF%E6%9C%BA%E5%88%B6-%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E4%B8%8E%E7%82%B9%E5%AF%B9%E7%82%B9%E9%80%9A%E4%BF%A1/" title="深入理解AutoGen消息机制：发布/订阅与点对点通信"><img src="https://microsoft.github.io/autogen/stable//_images/subscription.svg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="深入理解AutoGen消息机制：发布/订阅与点对点通信"></a><div class="content"><a class="title" href="/2025/11/14/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3AutoGen%E6%B6%88%E6%81%AF%E6%9C%BA%E5%88%B6-%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E4%B8%8E%E7%82%B9%E5%AF%B9%E7%82%B9%E9%80%9A%E4%BF%A1/" title="深入理解AutoGen消息机制：发布/订阅与点对点通信">深入理解AutoGen消息机制：发布/订阅与点对点通信</a><time datetime="2025-11-14T02:00:00.000Z" title="发表于 2025-11-14 10:00:00">2025-11-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/13/%E5%9F%BA%E4%BA%8EMarker%E7%9A%84%E6%99%BA%E8%83%BD%E6%96%87%E6%A1%A3%E8%A7%A3%E6%9E%90%E5%99%A8-AutoGen%E6%B5%8B%E8%AF%95%E5%B9%B3%E5%8F%B0%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/" title="基于Marker的智能文档解析器：AutoGen测试平台核心组件"><img src="https://images.unsplash.com/photo-1568667256549-094345857637?w=800&amp;q=80" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="基于Marker的智能文档解析器：AutoGen测试平台核心组件"></a><div class="content"><a class="title" href="/2025/11/13/%E5%9F%BA%E4%BA%8EMarker%E7%9A%84%E6%99%BA%E8%83%BD%E6%96%87%E6%A1%A3%E8%A7%A3%E6%9E%90%E5%99%A8-AutoGen%E6%B5%8B%E8%AF%95%E5%B9%B3%E5%8F%B0%E6%A0%B8%E5%BF%83%E7%BB%84%E4%BB%B6/" title="基于Marker的智能文档解析器：AutoGen测试平台核心组件">基于Marker的智能文档解析器：AutoGen测试平台核心组件</a><time datetime="2025-11-13T02:00:00.000Z" title="发表于 2025-11-13 10:00:00">2025-11-13</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/02/AutoGen%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E5%8D%8F%E4%BD%9C%E5%AE%9E%E6%88%98-%E6%9E%84%E5%BB%BA%E6%99%BA%E8%83%BD%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B%E7%94%9F%E6%88%90%E5%99%A8/" title="AutoGen多智能体协作实战：构建智能测试用例生成器（进阶篇）"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&amp;q=80" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AutoGen多智能体协作实战：构建智能测试用例生成器（进阶篇）"></a><div class="content"><a class="title" href="/2025/11/02/AutoGen%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93%E5%8D%8F%E4%BD%9C%E5%AE%9E%E6%88%98-%E6%9E%84%E5%BB%BA%E6%99%BA%E8%83%BD%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B%E7%94%9F%E6%88%90%E5%99%A8/" title="AutoGen多智能体协作实战：构建智能测试用例生成器（进阶篇）">AutoGen多智能体协作实战：构建智能测试用例生成器（进阶篇）</a><time datetime="2025-11-02T02:00:00.000Z" title="发表于 2025-11-02 10:00:00">2025-11-02</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/01/%E4%BD%BF%E7%94%A8AutoGen%E6%A1%86%E6%9E%B6%E6%9E%84%E5%BB%BADeepSeek%E6%99%BA%E8%83%BD%E4%BD%93%E5%AE%9E%E6%88%98/" title="AutoGen智能体开发实战（基础篇）：从零构建你的第一个AI智能体"><img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&amp;q=80" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AutoGen智能体开发实战（基础篇）：从零构建你的第一个AI智能体"></a><div class="content"><a class="title" href="/2025/11/01/%E4%BD%BF%E7%94%A8AutoGen%E6%A1%86%E6%9E%B6%E6%9E%84%E5%BB%BADeepSeek%E6%99%BA%E8%83%BD%E4%BD%93%E5%AE%9E%E6%88%98/" title="AutoGen智能体开发实战（基础篇）：从零构建你的第一个AI智能体">AutoGen智能体开发实战（基础篇）：从零构建你的第一个AI智能体</a><time datetime="2025-11-01T10:00:00.000Z" title="发表于 2025-11-01 18:00:00">2025-11-01</time></div></div></div></div></div></div></main><footer id="footer" style="background: transparent"><div id="footer-wrap"><div class="copyright">©2020 - 2025 By 王小七</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"></div></div><hr><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/pluginsSrc/node-snackbar/dist/snackbar.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadWaline () {
+  function insertCSS () {
+    const link = document.createElement("link")
+    link.rel = "stylesheet"
+    link.href = "/pluginsSrc/@waline/client/dist/waline.css"
+    document.head.appendChild(link)
+  }
+
+  function initWaline () {
+    const waline = Waline.init(Object.assign({
+      el: '#waline-wrap',
+      serverURL: 'https://waline-test-o3s6x3lr4-zhouzhou1014.vercel.app/',
+      pageview: false,
+      dark: 'html[data-theme="dark"]',
+      path: window.location.pathname,
+      comment: false,
+    }, null))
+  }
+
+  if (typeof Waline === 'function') initWaline()
+  else {
+    insertCSS()
+    getScript('/pluginsSrc/@waline/client/dist/waline.js').then(initWaline)
+  }
+}
+
+if ('Waline' === 'Waline' || !true) {
+  if (true) btf.loadComment(document.getElementById('waline-wrap'),loadWaline)
+  else setTimeout(loadWaline, 0)
+} else {
+  function loadOtherComment () {
+    loadWaline()
+  }
+}</script></div><video muted="" loop="" id="bgvid"><source src="/img/background2.mp4" type="video/webm"></video><script>document.addEventListener("click",function(){document.getElementById("bgvid").play()})</script><script data-pjax="">(function(){const e=()=>{if("/"!==window.location.pathname)return void console.log("[Hexo-Inject] Not on homepage, skipping calendar injection.");let t=0;const n=setInterval((()=>{if(++t,console.log(`[Hexo-Inject] Attempt ${t}: Checking for #recent-posts...`),document.getElementById("recent-posts")){console.log("[Hexo-Inject] #recent-posts found! Injecting calendar.");const e=document.getElementById("recent-posts");e.querySelector("img[alt*=\"Github chart\"]")?console.log("[Hexo-Inject] Calendar already exists."):(e.insertAdjacentHTML("afterbegin",`<div class="recent-post-item" style="width:100%;height:auto;padding:20px;text-align:center;"><h3 style="margin-bottom:15px;">📊 GitHub 贡献统计</h3><img src="https://ghchart.rshah.org/409EFF/wangxiaoqi-maker" alt="wangxiaoqi-maker Github chart" style="width:100%;max-width:1000px; border-radius: 8px;"/></div>`),console.log("[Hexo-Inject] Calendar injected successfully.")),clearInterval(n)}t>=10&&(console.error("[Hexo-Inject] Could not find #recent-posts element after 10 tries. Aborting."),clearInterval(n))}),500)};e(),document.addEventListener("pjax:complete",e)})();</script><script src="/pluginsSrc/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-heart" src="/pluginsSrc/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script async="" data-pjax="" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script async="" src="//at.alicdn.com/t/font_2032782_8d5kxvn09md.js"></script><div class="js-pjax"><script async="async">var arr = document.getElementsByClassName('recent-post-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '1s');
+    arr[i].setAttribute('data-wow-delay', '1s');
+    arr[i].setAttribute('data-wow-offset', '100');
+    arr[i].setAttribute('data-wow-iteration', '1');
+  }</script><script async="async">var arr = document.getElementsByClassName('card-widget');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script></div><script defer="" src="https://unpkg.zhimg.com/hexo-butterfly-wowjs/lib/wow.min.js"></script><script defer="" src="https://unpkg.zhimg.com/hexo-butterfly-wowjs/lib/wow_init.js"></script><script defer="" src="https://npm.elemecdn.com/jquery@latest/dist/jquery.min.js"></script><script defer="" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script defer="" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="" src="https://cdn.jsdelivr.net/npm/hexo-tag-plugins@latest/lib/mindmap.min.js"></script><!-- hexo injector body_end end --></body></html>
