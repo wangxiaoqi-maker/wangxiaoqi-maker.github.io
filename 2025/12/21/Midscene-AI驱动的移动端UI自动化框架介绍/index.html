@@ -1,0 +1,461 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Midscene：AI驱动的移动端UI自动化框架介绍 | XiaoQi's Blog</title><meta name="keywords" content="AI,自动化测试,Midscene,iOS,Android,UI自动化"><meta name="author" content="王小七,邮箱"><meta name="copyright" content="王小七"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言在移动应用测试领域，传统的 UI 自动化测试一直面临着诸多挑战：元素定位困难、维护成本高、脚本编写复杂等。而随着 AI 大模型技术的发展，一种全新的自动化测试方式正在兴起——基于视觉语言模型的智能 UI 自动化。 本文将介绍 Midscene.js，一款基于多模态大语言模型的 UI 自动化测试框架。它允许你使用自然语言描述测试步骤，让 AI 来理解界面、执行操作，彻底颠覆传统自动化测试的开发方">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Midscene：AI驱动的移动端UI自动化框架介绍">
+<meta property="og:url" content="http://example.com/2025/12/21/Midscene-AI%E9%A9%B1%E5%8A%A8%E7%9A%84%E7%A7%BB%E5%8A%A8%E7%AB%AFUI%E8%87%AA%E5%8A%A8%E5%8C%96%E6%A1%86%E6%9E%B6%E4%BB%8B%E7%BB%8D/index.html">
+<meta property="og:site_name" content="XiaoQi's Blog">
+<meta property="og:description" content="前言在移动应用测试领域，传统的 UI 自动化测试一直面临着诸多挑战：元素定位困难、维护成本高、脚本编写复杂等。而随着 AI 大模型技术的发展，一种全新的自动化测试方式正在兴起——基于视觉语言模型的智能 UI 自动化。 本文将介绍 Midscene.js，一款基于多模态大语言模型的 UI 自动化测试框架。它允许你使用自然语言描述测试步骤，让 AI 来理解界面、执行操作，彻底颠覆传统自动化测试的开发方">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images.unsplash.com/photo-1526498460520-4c246339dccb?w=800&amp;q=80">
+<meta property="article:published_time" content="2025-12-21T02:00:00.000Z">
+<meta property="article:modified_time" content="2025-12-21T09:37:48.674Z">
+<meta property="article:author" content="王小七">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="自动化测试">
+<meta property="article:tag" content="Midscene">
+<meta property="article:tag" content="iOS">
+<meta property="article:tag" content="Android">
+<meta property="article:tag" content="UI自动化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images.unsplash.com/photo-1526498460520-4c246339dccb?w=800&amp;q=80"><link rel="shortcut icon" href="/img/favicon.jpg"><link rel="canonical" href="http://example.com/2025/12/21/Midscene-AI%E9%A9%B1%E5%8A%A8%E7%9A%84%E7%A7%BB%E5%8A%A8%E7%AB%AFUI%E8%87%AA%E5%8A%A8%E5%8C%96%E6%A1%86%E6%9E%B6%E4%BB%8B%E7%BB%8D/"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="//busuanzi.ibruce.info"><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="/pluginsSrc/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":true,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: '/pluginsSrc/flickr-justified-gallery/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Midscene：AI驱动的移动端UI自动化框架介绍',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-12-21 17:37:48'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><style> body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td {margin:0; padding:0} video#bgvid { position:fixed; right:0; bottom:0; min-width:100%; min-height:100%; width:auto; height:auto; z-index:-100;head background-size:cover; } video {display:block;}</style><link rel="stylesheet" href="/css/custom.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="/css/mouse.css"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/assets/font-awesome-animation.min.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/tag_plugins.css" media="defer" onload="this.media='all'"><script src="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/assets/carousel-touch.js"></script><link rel="stylesheet" href="https://unpkg.zhimg.com/hexo-butterfly-wowjs/lib/animate.min.css" media="print" onload="this.media='screen'"><link rel="stylesheet" href="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/assets/font-awesome-animation.min.css" media="defer" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-tag-plugins@latest/lib/tag_plugins.min.css" media="defer" onload="this.media='all'"><script src="https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus@latest/lib/assets/carousel-touch.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-tag-plugins@latest/lib/mindmap.min.css" media="defer" onload="this.media='all'"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/favicon.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">17</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">33</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://images.unsplash.com/photo-1526498460520-4c246339dccb?w=800&amp;q=80')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">XiaoQi's Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Midscene：AI驱动的移动端UI自动化框架介绍</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-12-21T02:00:00.000Z" title="发表于 2025-12-21 10:00:00">2025-12-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-12-21T09:37:48.674Z" title="更新于 2025-12-21 17:37:48">2025-12-21</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%B5%8B%E8%AF%95/">测试</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.7k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>10分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Midscene：AI驱动的移动端UI自动化框架介绍"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><div class="top-img" style="background-image: url('https://images.unsplash.com/photo-1526498460520-4c246339dccb?w=800&amp;q=80');"></div><article class="post-content" id="article-container"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在移动应用测试领域，传统的 UI 自动化测试一直面临着诸多挑战：元素定位困难、维护成本高、脚本编写复杂等。而随着 AI 大模型技术的发展，一种全新的自动化测试方式正在兴起——<strong>基于视觉语言模型的智能 UI 自动化</strong>。</p>
+<p>本文将介绍 <strong>Midscene.js</strong>，一款基于多模态大语言模型的 UI 自动化测试框架。它允许你使用<strong>自然语言</strong>描述测试步骤，让 AI 来理解界面、执行操作，彻底颠覆传统自动化测试的开发方式！</p>
+<p>本文是 <strong>Midscene 移动端自动化系列</strong> 的第一篇，将带你全面了解这个框架的核心概念和优势。</p>
+<hr>
+<h2 id="Midscene-是什么？"><a href="#Midscene-是什么？" class="headerlink" title="Midscene 是什么？"></a>Midscene 是什么？</h2><h3 id="核心定义"><a href="#核心定义" class="headerlink" title="核心定义"></a>核心定义</h3><p><a target="_blank" rel="noopener" href="https://midscenejs.com/zh/">Midscene.js</a> 是一个基于 <strong>多模态大语言模型（Vision Language Model, VLM）</strong> 的 UI 自动化框架。它的核心理念是：</p>
+<blockquote>
+<p><strong>用自然语言描述你想做的事，让 AI 来完成界面操作。</strong></p>
+</blockquote>
+<p>传统自动化测试需要精确定位元素（XPath、CSS 选择器、Accessibility ID 等），而 Midscene 通过截取屏幕截图，利用 AI 模型理解界面内容，自动识别并操作目标元素。</p>
+<h3 id="支持平台"><a href="#支持平台" class="headerlink" title="支持平台"></a>支持平台</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>包名</th>
+<th>驱动方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Web 浏览器</td>
+<td><code>@midscene/web</code></td>
+<td>Playwright / Puppeteer</td>
+</tr>
+<tr>
+<td>Android</td>
+<td><code>@midscene/android</code></td>
+<td>adb（Android Debug Bridge）</td>
+</tr>
+<tr>
+<td>iOS</td>
+<td><code>@midscene/ios</code></td>
+<td>WebDriverAgent</td>
+</tr>
+<tr>
+<td>桌面应用</td>
+<td><code>@midscene/web</code></td>
+<td>Chrome DevTools</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="技术架构"><a href="#技术架构" class="headerlink" title="技术架构"></a>技术架构</h3><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────────────────────────────┐</span><br><span class="line">│                      用户层（User Layer）                    │</span><br><span class="line">│  ┌─────────────────────────────────────────────────────┐   │</span><br><span class="line">│  │           自然语言指令 / YAML 脚本 / JS 代码          │   │</span><br><span class="line">│  └─────────────────────────────────────────────────────┘   │</span><br><span class="line">└─────────────────────────────────────────────────────────────┘</span><br><span class="line">                              ↓</span><br><span class="line">┌─────────────────────────────────────────────────────────────┐</span><br><span class="line">│                   Midscene 核心（Core）                      │</span><br><span class="line">│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │</span><br><span class="line">│  │  截图引擎    │  │  AI 规划器   │  │  动作执行器  │      │</span><br><span class="line">│  │ Screenshot  │  │  AI Planner  │  │  Executor    │      │</span><br><span class="line">│  └──────────────┘  └──────────────┘  └──────────────┘      │</span><br><span class="line">└─────────────────────────────────────────────────────────────┘</span><br><span class="line">                              ↓</span><br><span class="line">┌─────────────────────────────────────────────────────────────┐</span><br><span class="line">│                     AI 模型层（AI Layer）                    │</span><br><span class="line">│  ┌────────────┐  ┌────────────┐  ┌────────────┐            │</span><br><span class="line">│  │  GPT-4o   │  │  Qwen-VL   │  │  UI-TARS   │  ...       │</span><br><span class="line">│  └────────────┘  └────────────┘  └────────────┘            │</span><br><span class="line">└─────────────────────────────────────────────────────────────┘</span><br><span class="line">                              ↓</span><br><span class="line">┌─────────────────────────────────────────────────────────────┐</span><br><span class="line">│                   设备层（Device Layer）                     │</span><br><span class="line">│  ┌────────────┐  ┌────────────┐  ┌────────────┐            │</span><br><span class="line">│  │  Android  │  │    iOS     │  │  Browser   │            │</span><br><span class="line">│  │   (adb)   │  │   (WDA)    │  │(Playwright)│            │</span><br><span class="line">│  └────────────┘  └────────────┘  └────────────┘            │</span><br><span class="line">└─────────────────────────────────────────────────────────────┘</span><br></pre></td></tr></tbody></table></figure>
+<hr>
+<h2 id="为什么选择-Midscene？"><a href="#为什么选择-Midscene？" class="headerlink" title="为什么选择 Midscene？"></a>为什么选择 Midscene？</h2><h3 id="传统自动化测试的痛点"><a href="#传统自动化测试的痛点" class="headerlink" title="传统自动化测试的痛点"></a>传统自动化测试的痛点</h3><p>❌ <strong>元素定位困难</strong>：XPath、CSS 选择器频繁变化，维护成本高<br>❌ <strong>跨平台不兼容</strong>：iOS、Android、Web 需要编写不同的脚本<br>❌ <strong>技术门槛高</strong>：需要掌握多种工具和编程技能<br>❌ <strong>脚本易失效</strong>：UI 微调导致测试脚本大面积失败<br>❌ <strong>无法处理动态内容</strong>：弹窗、加载状态等难以预测  </p>
+<h3 id="Midscene-的解决方案"><a href="#Midscene-的解决方案" class="headerlink" title="Midscene 的解决方案"></a>Midscene 的解决方案</h3><p>✅ <strong>自然语言操作</strong>：用人话描述测试步骤，无需关心元素定位<br>✅ <strong>智能识别</strong>：AI 理解界面语义，自动适应 UI 变化<br>✅ <strong>多平台统一</strong>：同一套 API 支持 Web、iOS、Android<br>✅ <strong>低技术门槛</strong>：非开发人员也能编写自动化脚本<br>✅ <strong>智能处理异常</strong>：自动识别并处理弹窗、权限请求等  </p>
+<h3 id="对比示例"><a href="#对比示例" class="headerlink" title="对比示例"></a>对比示例</h3><p><strong>传统方式（Appium）：</strong></p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 需要精确的元素定位器</span></span><br><span class="line">email_field = driver.find_element(</span><br><span class="line">    AppiumBy.XPATH, </span><br><span class="line">    <span class="string">"//android.widget.EditText[@resource-id='com.app:id/email']"</span></span><br><span class="line">)</span><br><span class="line">email_field.send_keys(<span class="string">"test@example.com"</span>)</span><br><span class="line"></span><br><span class="line">password_field = driver.find_element(</span><br><span class="line">    AppiumBy.XPATH,</span><br><span class="line">    <span class="string">"//android.widget.EditText[@resource-id='com.app:id/password']"</span></span><br><span class="line">)</span><br><span class="line">password_field.send_keys(<span class="string">"password123"</span>)</span><br><span class="line"></span><br><span class="line">login_button = driver.find_element(</span><br><span class="line">    AppiumBy.XPATH,</span><br><span class="line">    <span class="string">"//android.widget.Button[@text='登录']"</span></span><br><span class="line">)</span><br><span class="line">login_button.click()</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>Midscene 方式：</strong></p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 用自然语言描述，AI 自动完成</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiAct</span>(<span class="string">'在邮箱输入框输入 test@example.com'</span>);</span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiAct</span>(<span class="string">'在密码输入框输入 password123'</span>);</span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiAct</span>(<span class="string">'点击登录按钮'</span>);</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>优势一目了然！</strong> 🚀</p>
+<hr>
+<h2 id="Midscene-核心-API-介绍"><a href="#Midscene-核心-API-介绍" class="headerlink" title="Midscene 核心 API 介绍"></a>Midscene 核心 API 介绍</h2><p>Midscene 提供了简洁而强大的 API，主要分为以下几类：</p>
+<h3 id="1-动作类-API（Action）"><a href="#1-动作类-API（Action）" class="headerlink" title="1. 动作类 API（Action）"></a>1. 动作类 API（Action）</h3><h4 id="aiAct-智能动作执行"><a href="#aiAct-智能动作执行" class="headerlink" title="aiAct() - 智能动作执行"></a><code>aiAct()</code> - 智能动作执行</h4><p><strong>自动规划模式</strong>：AI 会自动规划并执行一系列操作。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 复杂操作一句话搞定</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiAct</span>(<span class="string">'在搜索框中输入 Midscene，执行搜索，跳转到第一条结果'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 表单填写</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiAct</span>(<span class="string">'填写完整的注册表单，让所有字段通过校验'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 页面导航</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiAct</span>(<span class="string">'点击设置按钮，进入账户页面，开启深色模式'</span>);</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>参数说明</strong>：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>instruction</td>
+<td>string</td>
+<td>自然语言描述的操作指令</td>
+</tr>
+<tr>
+<td>options</td>
+<td>object</td>
+<td>可选配置，如超时时间等</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4 id="aiTap-即时点击"><a href="#aiTap-即时点击" class="headerlink" title="aiTap() - 即时点击"></a><code>aiTap()</code> - 即时点击</h4><p><strong>即时操作模式</strong>：直接点击指定元素，不进行复杂规划。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 直接点击</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiTap</span>(<span class="string">'登录按钮'</span>);</span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiTap</span>(<span class="string">'右上角的设置图标'</span>);</span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiTap</span>(<span class="string">'第二条搜索结果'</span>);</span><br></pre></td></tr></tbody></table></figure>
+<p><strong>适用场景</strong>：</p>
+<ul>
+<li>简单的单次点击操作</li>
+<li>需要快速响应的场景</li>
+<li>已知明确目标元素的情况</li>
+</ul>
+<h4 id="aiInput-智能输入"><a href="#aiInput-智能输入" class="headerlink" title="aiInput() - 智能输入"></a><code>aiInput()</code> - 智能输入</h4><figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在指定位置输入文本</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiInput</span>(<span class="string">'用户名输入框'</span>, <span class="string">'testuser'</span>);</span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiInput</span>(<span class="string">'搜索框'</span>, <span class="string">'今天天气怎么样'</span>);</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="2-查询类-API（Query）"><a href="#2-查询类-API（Query）" class="headerlink" title="2. 查询类 API（Query）"></a>2. 查询类 API（Query）</h3><h4 id="aiQuery-数据提取"><a href="#aiQuery-数据提取" class="headerlink" title="aiQuery() - 数据提取"></a><code>aiQuery()</code> - 数据提取</h4><p>从界面中提取结构化数据，支持自定义返回格式。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 提取商品列表</span></span><br><span class="line"><span class="keyword">const</span> products = <span class="keyword">await</span> agent.<span class="title function_">aiQuery</span>(</span><br><span class="line">  <span class="string">'{name: string, price: number}[], 获取页面中所有商品的名称和价格'</span></span><br><span class="line">);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(products);</span><br><span class="line"><span class="comment">// 输出: [{ name: "iPhone 15", price: 6999 }, { name: "iPad Air", price: 4799 }]</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 提取单个值</span></span><br><span class="line"><span class="keyword">const</span> title = <span class="keyword">await</span> agent.<span class="title function_">aiQuery</span>(<span class="string">'string, 页面标题是什么'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 提取复杂数据</span></span><br><span class="line"><span class="keyword">const</span> orderInfo = <span class="keyword">await</span> agent.<span class="title function_">aiQuery</span>(<span class="string">`{</span></span><br><span class="line"><span class="string">  orderId: string,</span></span><br><span class="line"><span class="string">  status: string,</span></span><br><span class="line"><span class="string">  totalAmount: number,</span></span><br><span class="line"><span class="string">  items: { name: string, quantity: number }[]</span></span><br><span class="line"><span class="string">}, 获取订单详情`</span>);</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="aiString-aiNumber-aiBoolean-类型化查询"><a href="#aiString-aiNumber-aiBoolean-类型化查询" class="headerlink" title="aiString() / aiNumber() / aiBoolean() - 类型化查询"></a><code>aiString()</code> / <code>aiNumber()</code> / <code>aiBoolean()</code> - 类型化查询</h4><figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取字符串</span></span><br><span class="line"><span class="keyword">const</span> userName = <span class="keyword">await</span> agent.<span class="title function_">aiString</span>(<span class="string">'当前登录的用户名'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取数字</span></span><br><span class="line"><span class="keyword">const</span> itemCount = <span class="keyword">await</span> agent.<span class="title function_">aiNumber</span>(<span class="string">'购物车中的商品数量'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取布尔值</span></span><br><span class="line"><span class="keyword">const</span> isLoggedIn = <span class="keyword">await</span> agent.<span class="title function_">aiBoolean</span>(<span class="string">'用户是否已登录'</span>);</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="3-断言类-API（Assert）"><a href="#3-断言类-API（Assert）" class="headerlink" title="3. 断言类 API（Assert）"></a>3. 断言类 API（Assert）</h3><h4 id="aiAssert-智能断言"><a href="#aiAssert-智能断言" class="headerlink" title="aiAssert() - 智能断言"></a><code>aiAssert()</code> - 智能断言</h4><p>验证界面状态，如果条件不满足则抛出错误。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 验证页面状态</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiAssert</span>(<span class="string">'页面上显示了欢迎用户的信息'</span>);</span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiAssert</span>(<span class="string">'购物车图标上显示了数字 3'</span>);</span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiAssert</span>(<span class="string">'登录按钮是可点击的状态'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 复杂断言</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiAssert</span>(<span class="string">'商品列表至少显示了 5 个商品，且每个商品都有价格标签'</span>);</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="aiWaitFor-智能等待"><a href="#aiWaitFor-智能等待" class="headerlink" title="aiWaitFor() - 智能等待"></a><code>aiWaitFor()</code> - 智能等待</h4><p>等待某个条件满足后再继续执行。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 等待加载完成</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiWaitFor</span>(<span class="string">'页面加载完成，不再显示加载动画'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 等待元素出现</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiWaitFor</span>(<span class="string">'搜索结果已经显示'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 等待状态变化</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiWaitFor</span>(<span class="string">'订单状态变为"已完成"'</span>);</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="4-设备控制-API"><a href="#4-设备控制-API" class="headerlink" title="4. 设备控制 API"></a>4. 设备控制 API</h3><h4 id="通用控制"><a href="#通用控制" class="headerlink" title="通用控制"></a>通用控制</h4><figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 启动应用</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">launch</span>(<span class="string">'com.example.app'</span>);  <span class="comment">// Android 包名</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">launch</span>(<span class="string">'https://example.com'</span>);  <span class="comment">// iOS Safari</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 截图</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">screenshot</span>(<span class="string">'screenshot.png'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">pressKey</span>(<span class="string">'BACK'</span>);  <span class="comment">// Android</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">pressKey</span>(<span class="string">'HOME'</span>);</span><br></pre></td></tr></tbody></table></figure>
+<h4 id="坐标操作"><a href="#坐标操作" class="headerlink" title="坐标操作"></a>坐标操作</h4><figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 点击坐标</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">tap</span>(<span class="number">100</span>, <span class="number">200</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 滑动</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">swipe</span>(<span class="number">100</span>, <span class="number">500</span>, <span class="number">100</span>, <span class="number">100</span>);  <span class="comment">// 从 (100,500) 滑动到 (100,100)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 输入文本</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">input</span>(<span class="string">'Hello World'</span>);</span><br></pre></td></tr></tbody></table></figure>
+<hr>
+<h2 id="支持的-AI-模型"><a href="#支持的-AI-模型" class="headerlink" title="支持的 AI 模型"></a>支持的 AI 模型</h2><p>Midscene 支持多种视觉语言模型，你可以根据需求和成本选择：</p>
+<h3 id="模型对比"><a href="#模型对比" class="headerlink" title="模型对比"></a>模型对比</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>提供商</th>
+<th>特点</th>
+<th>推荐场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPT-4o</td>
+<td>OpenAI</td>
+<td>综合能力强，识别精准</td>
+<td>复杂场景、高精度要求</td>
+</tr>
+<tr>
+<td>GPT-4o-mini</td>
+<td>OpenAI</td>
+<td>成本低，速度快</td>
+<td>简单场景、预算有限</td>
+</tr>
+<tr>
+<td>Qwen2.5-VL</td>
+<td>阿里云</td>
+<td>中文优化，价格实惠</td>
+<td>中文应用、国内部署</td>
+</tr>
+<tr>
+<td>UI-TARS</td>
+<td>字节跳动</td>
+<td>专为 UI 优化</td>
+<td>UI 自动化专用</td>
+</tr>
+<tr>
+<td>Claude 3.5</td>
+<td>Anthropic</td>
+<td>推理能力强</td>
+<td>复杂逻辑判断</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 id="配置示例"><a href="#配置示例" class="headerlink" title="配置示例"></a>配置示例</h3><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 环境变量配置</span></span><br><span class="line"><span class="built_in">export</span> MIDSCENE_MODEL_BASE_URL=<span class="string">"https://api.openai.com/v1"</span></span><br><span class="line"><span class="built_in">export</span> MIDSCENE_MODEL_API_KEY=<span class="string">"sk-your-api-key"</span></span><br><span class="line"><span class="built_in">export</span> MIDSCENE_MODEL_NAME=<span class="string">"gpt-4o"</span></span><br><span class="line"><span class="built_in">export</span> MIDSCENE_MODEL_FAMILY=<span class="string">"openai"</span></span><br></pre></td></tr></tbody></table></figure>
+<p><strong>使用豆包（UI-TARS）：</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> MIDSCENE_MODEL_BASE_URL=<span class="string">"https://ark.cn-beijing.volces.com/api/v3"</span></span><br><span class="line"><span class="built_in">export</span> MIDSCENE_MODEL_API_KEY=<span class="string">"your-doubao-api-key"</span></span><br><span class="line"><span class="built_in">export</span> MIDSCENE_MODEL_NAME=<span class="string">"ep-your-endpoint-id"</span></span><br><span class="line"><span class="built_in">export</span> MIDSCENE_MODEL_FAMILY=<span class="string">"doubao"</span></span><br></pre></td></tr></tbody></table></figure>
+<p><strong>使用千问（Qwen-VL）：</strong></p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> MIDSCENE_MODEL_BASE_URL=<span class="string">"https://dashscope.aliyuncs.com/compatible-mode/v1"</span></span><br><span class="line"><span class="built_in">export</span> MIDSCENE_MODEL_API_KEY=<span class="string">"your-qwen-api-key"</span></span><br><span class="line"><span class="built_in">export</span> MIDSCENE_MODEL_NAME=<span class="string">"qwen-vl-max"</span></span><br><span class="line"><span class="built_in">export</span> MIDSCENE_MODEL_FAMILY=<span class="string">"qwen"</span></span><br></pre></td></tr></tbody></table></figure>
+<hr>
+<h2 id="Midscene-工作流程"><a href="#Midscene-工作流程" class="headerlink" title="Midscene 工作流程"></a>Midscene 工作流程</h2><h3 id="执行一条-AI-指令的完整流程"><a href="#执行一条-AI-指令的完整流程" class="headerlink" title="执行一条 AI 指令的完整流程"></a>执行一条 AI 指令的完整流程</h3><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">1. 用户发出指令</span><br><span class="line">   └─ agent.aiAct('点击登录按钮')</span><br><span class="line">          ↓</span><br><span class="line">2. 截取当前屏幕截图</span><br><span class="line">   └─ 获取设备屏幕的 base64 图像</span><br><span class="line">          ↓</span><br><span class="line">3. 构建 AI 请求</span><br><span class="line">   └─ 将截图 + 指令发送给 VLM 模型</span><br><span class="line">          ↓</span><br><span class="line">4. AI 分析并返回结果</span><br><span class="line">   └─ 模型识别界面，返回目标元素坐标/动作计划</span><br><span class="line">          ↓</span><br><span class="line">5. 执行操作</span><br><span class="line">   └─ Midscene 将 AI 返回的坐标转换为实际操作</span><br><span class="line">          ↓</span><br><span class="line">6. 验证结果</span><br><span class="line">   └─ 可选：再次截图验证操作是否成功</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="自动规划-vs-即时操作"><a href="#自动规划-vs-即时操作" class="headerlink" title="自动规划 vs 即时操作"></a>自动规划 vs 即时操作</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>模式</th>
+<th>API</th>
+<th>特点</th>
+<th>Token 消耗</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>自动规划</td>
+<td><code>aiAct()</code></td>
+<td>AI 自动分解复杂任务，逐步执行</td>
+<td>较高</td>
+</tr>
+<tr>
+<td>即时操作</td>
+<td><code>aiTap()</code></td>
+<td>直接执行单一操作，不做规划</td>
+<td>较低</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>使用建议</strong>：</p>
+<ul>
+<li>简单操作使用 <code>aiTap()</code>、<code>aiInput()</code>，减少 Token 消耗</li>
+<li>复杂流程使用 <code>aiAct()</code>，让 AI 自动规划</li>
+</ul>
+<hr>
+<h2 id="最佳实践：降低-Token-消耗"><a href="#最佳实践：降低-Token-消耗" class="headerlink" title="最佳实践：降低 Token 消耗"></a>最佳实践：降低 Token 消耗</h2><h3 id="1-使用-AI-缓存"><a href="#1-使用-AI-缓存" class="headerlink" title="1. 使用 AI 缓存"></a>1. 使用 AI 缓存</h3><p>Midscene 支持缓存 AI 规划结果，重复执行相同步骤时无需再次调用 AI。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 启用缓存</span></span><br><span class="line"><span class="keyword">const</span> agent = <span class="keyword">new</span> <span class="title class_">IOSAgent</span>(device, {</span><br><span class="line">  <span class="attr">cacheEnabled</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="attr">cacheDir</span>: <span class="string">'./midscene_cache'</span></span><br><span class="line">});</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="2-优先使用即时操作"><a href="#2-优先使用即时操作" class="headerlink" title="2. 优先使用即时操作"></a>2. 优先使用即时操作</h3><figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ❌ 不推荐：简单操作使用自动规划</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiAct</span>(<span class="string">'点击登录按钮'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// ✅ 推荐：简单操作使用即时操作</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiTap</span>(<span class="string">'登录按钮'</span>);</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="3-合并相关操作"><a href="#3-合并相关操作" class="headerlink" title="3. 合并相关操作"></a>3. 合并相关操作</h3><figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ❌ 不推荐：分开执行</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiAct</span>(<span class="string">'输入用户名'</span>);</span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiAct</span>(<span class="string">'输入密码'</span>);</span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiAct</span>(<span class="string">'点击登录'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// ✅ 推荐：合并为一条指令</span></span><br><span class="line"><span class="keyword">await</span> agent.<span class="title function_">aiAct</span>(<span class="string">'输入用户名 testuser，输入密码 123456，然后点击登录'</span>);</span><br></pre></td></tr></tbody></table></figure>
+<h3 id="4-使用-aiActionContext-处理弹窗"><a href="#4-使用-aiActionContext-处理弹窗" class="headerlink" title="4. 使用 aiActionContext 处理弹窗"></a>4. 使用 aiActionContext 处理弹窗</h3><figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> agent = <span class="keyword">new</span> <span class="title class_">IOSAgent</span>(device, {</span><br><span class="line">  <span class="attr">aiActionContext</span>: <span class="string">'如果出现权限弹窗请点击同意，如果出现登录弹窗请关闭'</span></span><br><span class="line">});</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这样就不需要单独处理各种弹窗了</span></span><br></pre></td></tr></tbody></table></figure>
+<h3 id="5-选择合适的模型"><a href="#5-选择合适的模型" class="headerlink" title="5. 选择合适的模型"></a>5. 选择合适的模型</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐模型</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>开发调试</td>
+<td>GPT-4o-mini</td>
+<td>成本低，速度快</td>
+</tr>
+<tr>
+<td>生产环境</td>
+<td>GPT-4o / Qwen-VL</td>
+<td>稳定性高</td>
+</tr>
+<tr>
+<td>中文应用</td>
+<td>Qwen-VL</td>
+<td>中文理解更好</td>
+</tr>
+<tr>
+<td>UI 密集型</td>
+<td>UI-TARS</td>
+<td>专为 UI 优化</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Midscene 作为一款 AI 驱动的 UI 自动化框架，带来了以下革命性的改变：</p>
+<p>✅ <strong>自然语言操作</strong>：用人话描述测试步骤<br>✅ <strong>智能识别</strong>：AI 理解界面语义，自动定位元素<br>✅ <strong>多平台统一</strong>：一套 API 支持 Web、iOS、Android<br>✅ <strong>低维护成本</strong>：UI 变化不影响测试脚本<br>✅ <strong>结构化数据提取</strong>：从界面提取 JSON 数据  </p>
+<h2 id="系列预告"><a href="#系列预告" class="headerlink" title="系列预告"></a>系列预告</h2><p>接下来的两篇文章将带你深入实践：</p>
+<p>📌 <strong>第二篇：iOS 和 Android 自动化环境配置</strong></p>
+<ul>
+<li>WebDriverAgent 配置（iOS）</li>
+<li>adb 环境搭建（Android）</li>
+<li>真机和模拟器的区别</li>
+<li>常见问题排查</li>
+</ul>
+<p>📌 <strong>第三篇：Midscene 移动端自动化实战</strong></p>
+<ul>
+<li>完整的 iOS/Android 自动化案例</li>
+<li>测试脚本编写技巧</li>
+<li>稳定性优化方案</li>
+<li>Token 成本控制策略</li>
+</ul>
+<p>敬请期待！💪</p>
+<hr>
+<h2 id="参考资源"><a href="#参考资源" class="headerlink" title="参考资源"></a>参考资源</h2><p><strong>官方文档</strong>：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://midscenejs.com/zh/">Midscene.js 官方网站</a></li>
+<li><a target="_blank" rel="noopener" href="https://midscenejs.com/zh/ios-getting-started.html">iOS 快速开始</a></li>
+<li><a target="_blank" rel="noopener" href="https://midscenejs.com/zh/android-getting-started.html">Android 快速开始</a></li>
+<li><a target="_blank" rel="noopener" href="https://midscenejs.com/zh/api.html">API 参考文档</a></li>
+</ul>
+<p><strong>示例项目</strong>：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/web-infra-dev/midscene-example/blob/main/ios/javascript-sdk-demo">iOS SDK 示例</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/web-infra-dev/midscene-example/tree/main/android">Android SDK 示例</a></li>
+</ul>
+<hr>
+<blockquote>
+<p>💡 <strong>温馨提示</strong>：AI 驱动的 UI 自动化是测试领域的新趋势，掌握 Midscene 将让你的自动化测试更加高效和智能！</p>
+<p>🔥 <strong>推荐阅读</strong>：本系列的后续文章将带你从环境配置到实战应用，全面掌握 Midscene！</p>
+<p>📚 <strong>系列文章</strong>：本系列会持续更新，记得关注后续的配置篇和实战篇！</p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="http://example.com">王小七</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2025/12/21/Midscene-AI%E9%A9%B1%E5%8A%A8%E7%9A%84%E7%A7%BB%E5%8A%A8%E7%AB%AFUI%E8%87%AA%E5%8A%A8%E5%8C%96%E6%A1%86%E6%9E%B6%E4%BB%8B%E7%BB%8D/">http://example.com/2025/12/21/Midscene-AI驱动的移动端UI自动化框架介绍/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">XiaoQi's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/AI/">AI</a><a class="post-meta__tags" href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95/">自动化测试</a><a class="post-meta__tags" href="/tags/Midscene/">Midscene</a><a class="post-meta__tags" href="/tags/iOS/">iOS</a><a class="post-meta__tags" href="/tags/Android/">Android</a><a class="post-meta__tags" href="/tags/UI%E8%87%AA%E5%8A%A8%E5%8C%96/">UI自动化</a></div><div class="post_share"><div class="social-share" data-image="https://images.unsplash.com/photo-1526498460520-4c246339dccb?w=800&amp;q=80" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="/pluginsSrc/butterfly-extsrc/ShareJS/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="/pluginsSrc/butterfly-extsrc/ShareJS/dist/js/social-share.min.js" defer=""></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="wechat"></a><div class="post-qr-code-desc">wechat</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/12/21/Midscene%E7%A7%BB%E5%8A%A8%E7%AB%AF%E8%87%AA%E5%8A%A8%E5%8C%96%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-iOS%E5%92%8CAndroid%E7%AF%87/"><img class="prev-cover" src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&amp;q=80" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Midscene移动端自动化环境配置：iOS和Android篇</div></div></a></div><div class="next-post pull-right"><a href="/2025/12/08/AutoGen-GraphFlow%E5%B7%A5%E4%BD%9C%E6%B5%81%E5%AE%9E%E6%88%98-%E6%9E%84%E5%BB%BA%E6%99%BA%E8%83%BD%E5%8D%8F%E4%BD%9C%E7%AE%A1%E9%81%93/"><img class="next-cover" src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&amp;q=80" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">AutoGen GraphFlow工作流实战：构建智能协作管道</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2025/12/21/Midscene%E7%A7%BB%E5%8A%A8%E7%AB%AF%E8%87%AA%E5%8A%A8%E5%8C%96%E5%AE%9E%E6%88%98-%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A/" title="Midscene移动端自动化实战：从入门到精通"><img class="cover" src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&amp;q=80" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-21</div><div class="title">Midscene移动端自动化实战：从入门到精通</div></div></a></div><div><a href="/2025/12/21/Midscene%E7%A7%BB%E5%8A%A8%E7%AB%AF%E8%87%AA%E5%8A%A8%E5%8C%96%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-iOS%E5%92%8CAndroid%E7%AF%87/" title="Midscene移动端自动化环境配置：iOS和Android篇"><img class="cover" src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&amp;q=80" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-12-21</div><div class="title">Midscene移动端自动化环境配置：iOS和Android篇</div></div></a></div><div><a href="/2025/11/01/Python%E8%B0%83%E7%94%A8DeepSeek-API%E5%AE%9E%E6%88%98%E6%95%99%E7%A8%8B/" title="Python调用DeepSeek API实战教程"><img class="cover" src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=800" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-11-01</div><div class="title">Python调用DeepSeek API实战教程</div></div></a></div></div></div><hr><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="waline-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/favicon.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"></div><div class="author-info__name">王小七</div><div class="author-info__description">小七的测试成长之路</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">17</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">33</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">7</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/wangxiaoqi-maker"><i class="fab fa-github"></i><span>订阅</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/xxxxx" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:17621525387@139.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://wpa.qq.com/msgrd?v=3&amp;uin=417637243&amp;site=qq&amp;menu=yes" target="_blank" title="QQ"><i class="fab fa-qq"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Midscene-%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.1.</span> <span class="toc-text">Midscene 是什么？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E5%AE%9A%E4%B9%89"><span class="toc-number">1.1.1.</span> <span class="toc-text">核心定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%94%AF%E6%8C%81%E5%B9%B3%E5%8F%B0"><span class="toc-number">1.1.2.</span> <span class="toc-text">支持平台</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8A%80%E6%9C%AF%E6%9E%B6%E6%9E%84"><span class="toc-number">1.1.3.</span> <span class="toc-text">技术架构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9-Midscene%EF%BC%9F"><span class="toc-number">1.2.</span> <span class="toc-text">为什么选择 Midscene？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BC%A0%E7%BB%9F%E8%87%AA%E5%8A%A8%E5%8C%96%E6%B5%8B%E8%AF%95%E7%9A%84%E7%97%9B%E7%82%B9"><span class="toc-number">1.2.1.</span> <span class="toc-text">传统自动化测试的痛点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Midscene-%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">1.2.2.</span> <span class="toc-text">Midscene 的解决方案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E6%AF%94%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.2.3.</span> <span class="toc-text">对比示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Midscene-%E6%A0%B8%E5%BF%83-API-%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.3.</span> <span class="toc-text">Midscene 核心 API 介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%8A%A8%E4%BD%9C%E7%B1%BB-API%EF%BC%88Action%EF%BC%89"><span class="toc-number">1.3.1.</span> <span class="toc-text">1. 动作类 API（Action）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#aiAct-%E6%99%BA%E8%83%BD%E5%8A%A8%E4%BD%9C%E6%89%A7%E8%A1%8C"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">aiAct() - 智能动作执行</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#aiTap-%E5%8D%B3%E6%97%B6%E7%82%B9%E5%87%BB"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">aiTap() - 即时点击</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#aiInput-%E6%99%BA%E8%83%BD%E8%BE%93%E5%85%A5"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">aiInput() - 智能输入</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%9F%A5%E8%AF%A2%E7%B1%BB-API%EF%BC%88Query%EF%BC%89"><span class="toc-number">1.3.2.</span> <span class="toc-text">2. 查询类 API（Query）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#aiQuery-%E6%95%B0%E6%8D%AE%E6%8F%90%E5%8F%96"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">aiQuery() - 数据提取</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#aiString-aiNumber-aiBoolean-%E7%B1%BB%E5%9E%8B%E5%8C%96%E6%9F%A5%E8%AF%A2"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">aiString() / aiNumber() / aiBoolean() - 类型化查询</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%96%AD%E8%A8%80%E7%B1%BB-API%EF%BC%88Assert%EF%BC%89"><span class="toc-number">1.3.3.</span> <span class="toc-text">3. 断言类 API（Assert）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#aiAssert-%E6%99%BA%E8%83%BD%E6%96%AD%E8%A8%80"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">aiAssert() - 智能断言</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#aiWaitFor-%E6%99%BA%E8%83%BD%E7%AD%89%E5%BE%85"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">aiWaitFor() - 智能等待</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%AE%BE%E5%A4%87%E6%8E%A7%E5%88%B6-API"><span class="toc-number">1.3.4.</span> <span class="toc-text">4. 设备控制 API</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%9A%E7%94%A8%E6%8E%A7%E5%88%B6"><span class="toc-number">1.3.4.1.</span> <span class="toc-text">通用控制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9D%90%E6%A0%87%E6%93%8D%E4%BD%9C"><span class="toc-number">1.3.4.2.</span> <span class="toc-text">坐标操作</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%94%AF%E6%8C%81%E7%9A%84-AI-%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.4.</span> <span class="toc-text">支持的 AI 模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E5%AF%B9%E6%AF%94"><span class="toc-number">1.4.1.</span> <span class="toc-text">模型对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.4.2.</span> <span class="toc-text">配置示例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Midscene-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-number">1.5.</span> <span class="toc-text">Midscene 工作流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E4%B8%80%E6%9D%A1-AI-%E6%8C%87%E4%BB%A4%E7%9A%84%E5%AE%8C%E6%95%B4%E6%B5%81%E7%A8%8B"><span class="toc-number">1.5.1.</span> <span class="toc-text">执行一条 AI 指令的完整流程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E5%8A%A8%E8%A7%84%E5%88%92-vs-%E5%8D%B3%E6%97%B6%E6%93%8D%E4%BD%9C"><span class="toc-number">1.5.2.</span> <span class="toc-text">自动规划 vs 即时操作</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%EF%BC%9A%E9%99%8D%E4%BD%8E-Token-%E6%B6%88%E8%80%97"><span class="toc-number">1.6.</span> <span class="toc-text">最佳实践：降低 Token 消耗</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E4%BD%BF%E7%94%A8-AI-%E7%BC%93%E5%AD%98"><span class="toc-number">1.6.1.</span> <span class="toc-text">1. 使用 AI 缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E4%BC%98%E5%85%88%E4%BD%BF%E7%94%A8%E5%8D%B3%E6%97%B6%E6%93%8D%E4%BD%9C"><span class="toc-number">1.6.2.</span> <span class="toc-text">2. 优先使用即时操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%90%88%E5%B9%B6%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C"><span class="toc-number">1.6.3.</span> <span class="toc-text">3. 合并相关操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%BD%BF%E7%94%A8-aiActionContext-%E5%A4%84%E7%90%86%E5%BC%B9%E7%AA%97"><span class="toc-number">1.6.4.</span> <span class="toc-text">4. 使用 aiActionContext 处理弹窗</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E9%80%89%E6%8B%A9%E5%90%88%E9%80%82%E7%9A%84%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.6.5.</span> <span class="toc-text">5. 选择合适的模型</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.7.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B3%BB%E5%88%97%E9%A2%84%E5%91%8A"><span class="toc-number">1.8.</span> <span class="toc-text">系列预告</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%BA%90"><span class="toc-number">1.9.</span> <span class="toc-text">参考资源</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/12/21/Midscene%E7%A7%BB%E5%8A%A8%E7%AB%AF%E8%87%AA%E5%8A%A8%E5%8C%96%E5%AE%9E%E6%88%98-%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A/" title="Midscene移动端自动化实战：从入门到精通"><img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&amp;q=80" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Midscene移动端自动化实战：从入门到精通"></a><div class="content"><a class="title" href="/2025/12/21/Midscene%E7%A7%BB%E5%8A%A8%E7%AB%AF%E8%87%AA%E5%8A%A8%E5%8C%96%E5%AE%9E%E6%88%98-%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A/" title="Midscene移动端自动化实战：从入门到精通">Midscene移动端自动化实战：从入门到精通</a><time datetime="2025-12-21T04:00:00.000Z" title="发表于 2025-12-21 12:00:00">2025-12-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/12/21/Midscene%E7%A7%BB%E5%8A%A8%E7%AB%AF%E8%87%AA%E5%8A%A8%E5%8C%96%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-iOS%E5%92%8CAndroid%E7%AF%87/" title="Midscene移动端自动化环境配置：iOS和Android篇"><img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&amp;q=80" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Midscene移动端自动化环境配置：iOS和Android篇"></a><div class="content"><a class="title" href="/2025/12/21/Midscene%E7%A7%BB%E5%8A%A8%E7%AB%AF%E8%87%AA%E5%8A%A8%E5%8C%96%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE-iOS%E5%92%8CAndroid%E7%AF%87/" title="Midscene移动端自动化环境配置：iOS和Android篇">Midscene移动端自动化环境配置：iOS和Android篇</a><time datetime="2025-12-21T03:00:00.000Z" title="发表于 2025-12-21 11:00:00">2025-12-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/12/21/Midscene-AI%E9%A9%B1%E5%8A%A8%E7%9A%84%E7%A7%BB%E5%8A%A8%E7%AB%AFUI%E8%87%AA%E5%8A%A8%E5%8C%96%E6%A1%86%E6%9E%B6%E4%BB%8B%E7%BB%8D/" title="Midscene：AI驱动的移动端UI自动化框架介绍"><img src="https://images.unsplash.com/photo-1526498460520-4c246339dccb?w=800&amp;q=80" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Midscene：AI驱动的移动端UI自动化框架介绍"></a><div class="content"><a class="title" href="/2025/12/21/Midscene-AI%E9%A9%B1%E5%8A%A8%E7%9A%84%E7%A7%BB%E5%8A%A8%E7%AB%AFUI%E8%87%AA%E5%8A%A8%E5%8C%96%E6%A1%86%E6%9E%B6%E4%BB%8B%E7%BB%8D/" title="Midscene：AI驱动的移动端UI自动化框架介绍">Midscene：AI驱动的移动端UI自动化框架介绍</a><time datetime="2025-12-21T02:00:00.000Z" title="发表于 2025-12-21 10:00:00">2025-12-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/12/08/AutoGen-GraphFlow%E5%B7%A5%E4%BD%9C%E6%B5%81%E5%AE%9E%E6%88%98-%E6%9E%84%E5%BB%BA%E6%99%BA%E8%83%BD%E5%8D%8F%E4%BD%9C%E7%AE%A1%E9%81%93/" title="AutoGen GraphFlow工作流实战：构建智能协作管道"><img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&amp;q=80" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="AutoGen GraphFlow工作流实战：构建智能协作管道"></a><div class="content"><a class="title" href="/2025/12/08/AutoGen-GraphFlow%E5%B7%A5%E4%BD%9C%E6%B5%81%E5%AE%9E%E6%88%98-%E6%9E%84%E5%BB%BA%E6%99%BA%E8%83%BD%E5%8D%8F%E4%BD%9C%E7%AE%A1%E9%81%93/" title="AutoGen GraphFlow工作流实战：构建智能协作管道">AutoGen GraphFlow工作流实战：构建智能协作管道</a><time datetime="2025-12-08T13:00:00.000Z" title="发表于 2025-12-08 21:00:00">2025-12-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/11/14/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3AutoGen%E6%B6%88%E6%81%AF%E6%9C%BA%E5%88%B6-%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E4%B8%8E%E7%82%B9%E5%AF%B9%E7%82%B9%E9%80%9A%E4%BF%A1/" title="深入理解AutoGen消息机制：发布/订阅与点对点通信"><img src="https://microsoft.github.io/autogen/stable//_images/subscription.svg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="深入理解AutoGen消息机制：发布/订阅与点对点通信"></a><div class="content"><a class="title" href="/2025/11/14/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3AutoGen%E6%B6%88%E6%81%AF%E6%9C%BA%E5%88%B6-%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E4%B8%8E%E7%82%B9%E5%AF%B9%E7%82%B9%E9%80%9A%E4%BF%A1/" title="深入理解AutoGen消息机制：发布/订阅与点对点通信">深入理解AutoGen消息机制：发布/订阅与点对点通信</a><time datetime="2025-11-14T02:00:00.000Z" title="发表于 2025-11-14 10:00:00">2025-11-14</time></div></div></div></div></div></div></main><footer id="footer" style="background: transparent"><div id="footer-wrap"><div class="copyright">©2020 - 2025 By 王小七</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"></div></div><hr><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/pluginsSrc/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="/pluginsSrc/node-snackbar/dist/snackbar.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function loadWaline () {
+  function insertCSS () {
+    const link = document.createElement("link")
+    link.rel = "stylesheet"
+    link.href = "/pluginsSrc/@waline/client/dist/waline.css"
+    document.head.appendChild(link)
+  }
+
+  function initWaline () {
+    const waline = Waline.init(Object.assign({
+      el: '#waline-wrap',
+      serverURL: 'https://waline-test-o3s6x3lr4-zhouzhou1014.vercel.app/',
+      pageview: false,
+      dark: 'html[data-theme="dark"]',
+      path: window.location.pathname,
+      comment: false,
+    }, null))
+  }
+
+  if (typeof Waline === 'function') initWaline()
+  else {
+    insertCSS()
+    getScript('/pluginsSrc/@waline/client/dist/waline.js').then(initWaline)
+  }
+}
+
+if ('Waline' === 'Waline' || !true) {
+  if (true) btf.loadComment(document.getElementById('waline-wrap'),loadWaline)
+  else setTimeout(loadWaline, 0)
+} else {
+  function loadOtherComment () {
+    loadWaline()
+  }
+}</script></div><video muted="" loop="" id="bgvid"><source src="/img/background2.mp4" type="video/webm"></video><script>document.addEventListener("click",function(){document.getElementById("bgvid").play()})</script><script data-pjax="">(function(){const e=()=>{if("/"!==window.location.pathname)return void console.log("[Hexo-Inject] Not on homepage, skipping calendar injection.");let t=0;const n=setInterval((()=>{if(++t,console.log(`[Hexo-Inject] Attempt ${t}: Checking for #recent-posts...`),document.getElementById("recent-posts")){console.log("[Hexo-Inject] #recent-posts found! Injecting calendar.");const e=document.getElementById("recent-posts");e.querySelector("img[alt*=\"Github chart\"]")?console.log("[Hexo-Inject] Calendar already exists."):(e.insertAdjacentHTML("afterbegin",`<div class="recent-post-item" style="width:100%;height:auto;padding:20px;text-align:center;"><h3 style="margin-bottom:15px;">📊 GitHub 贡献统计</h3><img src="https://ghchart.rshah.org/409EFF/wangxiaoqi-maker" alt="wangxiaoqi-maker Github chart" style="width:100%;max-width:1000px; border-radius: 8px;"/></div>`),console.log("[Hexo-Inject] Calendar injected successfully.")),clearInterval(n)}t>=10&&(console.error("[Hexo-Inject] Could not find #recent-posts element after 10 tries. Aborting."),clearInterval(n))}),500)};e(),document.addEventListener("pjax:complete",e)})();</script><script src="/pluginsSrc/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-heart" src="/pluginsSrc/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script async="" data-pjax="" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script async="" src="//at.alicdn.com/t/font_2032782_8d5kxvn09md.js"></script><div class="js-pjax"><script async="async">var arr = document.getElementsByClassName('recent-post-item');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '1s');
+    arr[i].setAttribute('data-wow-delay', '1s');
+    arr[i].setAttribute('data-wow-offset', '100');
+    arr[i].setAttribute('data-wow-iteration', '1');
+  }</script><script async="async">var arr = document.getElementsByClassName('card-widget');
+for(var i = 0;i<arr.length;i++){
+    arr[i].classList.add('wow');
+    arr[i].classList.add('animate__zoomIn');
+    arr[i].setAttribute('data-wow-duration', '');
+    arr[i].setAttribute('data-wow-delay', '');
+    arr[i].setAttribute('data-wow-offset', '');
+    arr[i].setAttribute('data-wow-iteration', '');
+  }</script></div><script defer="" src="https://unpkg.zhimg.com/hexo-butterfly-wowjs/lib/wow.min.js"></script><script defer="" src="https://unpkg.zhimg.com/hexo-butterfly-wowjs/lib/wow_init.js"></script><script defer="" src="https://npm.elemecdn.com/jquery@latest/dist/jquery.min.js"></script><script defer="" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script defer="" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="" src="https://cdn.jsdelivr.net/npm/hexo-tag-plugins@latest/lib/mindmap.min.js"></script><!-- hexo injector body_end end --></body></html>
