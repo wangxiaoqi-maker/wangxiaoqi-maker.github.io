@@ -1,6 +1,6 @@
 ---
 title: Google AI Pro 学生优惠免费领取完整攻略
-date: 2026-01-08 11:00:00
+date: 2026-01-05 11:00:00
 tags:
   - AI
   - Gemini
